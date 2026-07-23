@@ -3,7 +3,14 @@ from datetime import time
 from zoneinfo import ZoneInfo
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-DATABASE_URL = os.environ["DATABASE_URL"].replace("postgres://", "postgresql+asyncpg://", 1)
+
+_raw_db_url = os.environ["DATABASE_URL"]
+if _raw_db_url.startswith("postgresql+asyncpg://"):
+    DATABASE_URL = _raw_db_url
+elif _raw_db_url.startswith("postgresql://"):
+    DATABASE_URL = _raw_db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+else:
+    DATABASE_URL = _raw_db_url.replace("postgres://", "postgresql+asyncpg://", 1)
 
 # Чат/группа кухни, куда падают отчёты и заявки на подтверждение новых кофеен
 ADMIN_CHAT_ID = int(os.environ["ADMIN_CHAT_ID"])
